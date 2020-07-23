@@ -4,6 +4,7 @@ import { TranslationCollection, TranslationType } from '../utils/translation.col
 import { po } from 'gettext-parser';
 
 export class PoCompiler implements CompilerInterface {
+	public eofNewline = false;
 	public extension: string = 'po';
 
 	/**
@@ -11,7 +12,11 @@ export class PoCompiler implements CompilerInterface {
 	 */
 	public domain: string = '';
 
-	public constructor(options?: any) {}
+	public constructor(options?: any) {
+		if (options && typeof options.eofNewline !== 'undefined') {
+			this.eofNewline = options.eofNewline;
+		}
+	}
 
 	public compile(collection: TranslationCollection): string {
 		const data = {
@@ -34,7 +39,8 @@ export class PoCompiler implements CompilerInterface {
 			}
 		};
 
-		return po.compile(data).toString('utf8');
+		const compiled = po.compile(data).toString('utf8');
+		return compiled + (this.eofNewline ? '\n' : '');
 	}
 
 	public parse(contents: string): TranslationCollection {

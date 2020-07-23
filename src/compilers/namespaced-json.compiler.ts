@@ -6,6 +6,7 @@ import { flatten, unflatten } from 'flat';
 
 export class NamespacedJsonCompiler implements CompilerInterface {
 	public indentation: string = '\t';
+	public eofNewline = false;
 
 	public extension = 'json';
 
@@ -13,13 +14,18 @@ export class NamespacedJsonCompiler implements CompilerInterface {
 		if (options && typeof options.indentation !== 'undefined') {
 			this.indentation = options.indentation;
 		}
+		if (options && typeof options.eofNewline !== 'undefined') {
+			this.eofNewline = options.eofNewline;
+		}
 	}
 
 	public compile(collection: TranslationCollection): string {
 		const values: {} = unflatten(collection.values, {
 			object: true
 		});
-		return JSON.stringify(values, null, this.indentation);
+
+		let json = JSON.stringify(values, null, this.indentation);
+		return json + (this.eofNewline ? '\n' : '');
 	}
 
 	public parse(contents: string): TranslationCollection {
