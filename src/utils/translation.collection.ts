@@ -2,6 +2,18 @@ export interface TranslationType {
 	[key: string]: string;
 }
 
+export class LintCollection {
+	public values: string[] = [];
+
+	public constructor(values: string[] = []) {
+		this.values = values;
+	}
+
+	public hasNewKeys(): boolean {
+		return this.values.length > 0;
+	}
+}
+
 export class TranslationCollection {
 	public values: TranslationType = {};
 
@@ -89,5 +101,15 @@ export class TranslationCollection {
 			});
 
 		return new TranslationCollection(values);
+	}
+
+	public lintKeys(collection: TranslationCollection): LintCollection {
+		const newKeys: string[] = [];
+		this.keys().forEach( key => {
+			if (!collection.has(key)) {
+				newKeys.push(key);
+			}
+		});
+		return new LintCollection(newKeys);
 	}
 }

@@ -12,11 +12,13 @@ import * as mkdirp from 'mkdirp';
 
 export interface ExtractTaskOptionsInterface {
 	replace?: boolean;
+	lint?: boolean;
 }
 
 export class ExtractTask implements TaskInterface {
 	protected options: ExtractTaskOptionsInterface = {
-		replace: false
+		replace: false,
+		lint: false
 	};
 
 	protected parsers: ParserInterface[] = [];
@@ -30,6 +32,7 @@ export class ExtractTask implements TaskInterface {
 	}
 
 	public execute(): void {
+		let lintingValid: boolean = true;
 		if (!this.compiler) {
 			throw new Error('No compiler configured');
 		}
@@ -64,25 +67,43 @@ export class ExtractTask implements TaskInterface {
 				}
 			}
 
-			// merge extracted strings with existing
-			const draft = extracted.union(existing);
-
-			// Run collection through post processors
-			const final = this.process(draft, extracted, existing);
-
-			// Save
-			try {
-				let event = 'CREATED';
-				if (fs.existsSync(outputPath)) {
-					this.options.replace ? (event = 'REPLACED') : (event = 'MERGED');
+			if (!!this.options.lint) {
+				const lint = extracted.lintKeys(existing);
+				const hasNewKeys = lint.hasNewKeys();
+				if (hasNewKeys) {
+					this.out(`%s %s`, dim(`- ${outputPath}`), red(`[INVALID KEYS]`), dim(lint.values.toString()));
+				} else {
+					this.out(`%s %s`, dim(`- ${outputPath}`), green(`[KEYS MATCHED]`));
 				}
-				this.save(outputPath, final);
-				this.out(`%s %s`, dim(`- ${outputPath}`), green(`[${event}]`));
-			} catch (e) {
-				this.out(`%s %s`, dim(`- ${outputPath}`), red(`[ERROR]`));
-				throw e;
+
+				if (hasNewKeys) {
+					lintingValid = false;
+				}
+			} else {
+				// merge extracted strings with existing
+				const draft = extracted.union(existing);
+
+				// Run collection through post processors
+				const final = this.process(draft, extracted, existing);
+
+				// Save
+				try {
+					let event = 'CREATED';
+					if (fs.existsSync(outputPath)) {
+						this.options.replace ? (event = 'REPLACED') : (event = 'MERGED');
+					}
+					this.save(outputPath, final);
+					this.out(`%s %s`, dim(`- ${outputPath}`), green(`[${event}]`));
+				} catch (e) {
+					this.out(`%s %s`, dim(`- ${outputPath}`), red(`[ERROR]`));
+					throw e;
+				}
 			}
 		});
+
+		if (!lintingValid) {
+			throw new Error('Linting failed');
+		}
 	}
 
 	public setParsers(parsers: ParserInterface[]): this {

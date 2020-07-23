@@ -104,6 +104,12 @@ export const cli = y
 		type: 'string',
 		conflicts: ['null-as-default-value', 'key-as-default-value']
 	})
+	.option('lint', {
+		alias: 'lt',
+		describe: 'Tests if given output files containing all keys',
+		default: false,
+		type: 'boolean'
+	})
 	.group(['format', 'format-indentation', 'sort', 'clean', 'replace'], 'Output')
 	.group(['key-as-default-value', 'null-as-default-value', 'string-as-default-value'], 'Extracted key value (defaults to empty string)')
 	.conflicts('key-as-default-value', 'null-as-default-value')
@@ -118,7 +124,8 @@ export const cli = y
 	.parse(process.argv);
 
 const extractTask = new ExtractTask(cli.input, cli.output, {
-	replace: cli.replace
+	replace: cli.replace,
+	lint: cli.lint
 });
 
 // Parsers
