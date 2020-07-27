@@ -1,7 +1,7 @@
 {
-  "name": "@biesbjerg/ngx-translate-extract",
-  "version": "7.0.2",
-  "description": "Extract strings from projects using ngx-translate",
+  "name": "@buchtadan/ngx-translate-extract-fork",
+  "version": "7.0.2-enhancedFork",
+  "description": "Its an fork from @biesbjerg/ngx-translate-extract so please check it out. Extract strings from projects using ngx-translate",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/biesbjerg/ngx-translate-extract.git"
+    "url": "https://github.com/buchtadan/ngx-translate-extract.git"
   },
   "keywords": [
     "angular",
@@ -50,12 +50,12 @@
     "i18n",
     "gettext"
   ],
-  "author": "Kim Biesbjerg <kim@biesbjerg.com>",
+  "author": "Daniel Buchta <buchtadan@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/biesbjerg/ngx-translate-extract/issues"
+    "url": "https://github.com/buchtadan/ngx-translate-extract/issues"
   },
-  "homepage": "https://github.com/biesbjerg/ngx-translate-extract",
+  "homepage": "https://github.com/buchtadan/ngx-translate-extract",
   "engines": {
     "node": ">=11.15.0"
   },
